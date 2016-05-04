@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title><%=title %></title>
+	</head>
+
+	<body>
+	<%- include header %>
+		<div class="container">
+			<div class="row">
+
+				<table class="table table-striped">
+					<caption>我的笔记列表</caption>
+					<thead><th>标题</th><th>标签</th><th>日期</th></thead>
+					<tbody>
+					<tr><td>标题</td><td>标签</td><td>日期</td></tr>
+						<% notes.forEach(function(note){ %>
+						<tr><td><a id="<%=note.id%>"> <%=note.title%></a></td><td><%=note.tag%></td><td><%=moment(note.createtime).locale('zh-cn').format('LL HH:mm:ss')%></td></tr>
+						<%});%>
+					</tbody>
+				</table>
+			</div>
+			<div class="row">
+				<ul class="pagination">
+
+				</ul>
+			</div>
+		</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">文章内容</h4>
+				</div>
+				<div class="modal-body">
+					<div><span>文章头：</span> <span id="note_title"></span></div>
+					<div><span>发表时间：</span> <span id="note_time"></span></div>
+					<div><span>内容：</span> <span id="note_content"></span></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<%- include footer %>
+	<script type="text/javascript" >
+		$(document).ready(function() {
+			if($("#pagination")){
+				var pagecount=<%=pageCounts %>;
+				 var pagesize=<%=pageSize %>;
+				 var currentpage=<%=currentpage %>;
+				 var counts,pagehtml="";
+				 if(pagecount%pagesize==0){
+				 	counts = parseInt(pagecount/pagesize);
+				 }else{
+				 	counts = parseInt(pagecount/pagesize)+1;
+				 }
+				 //只有一页内容
+				 if(pagecount<=pagesize){pagehtml="";}
+				 //大于一页内容
+					 if(pagecount>pagesize){
+						 if(currentpage>1){
+							pagehtml+= '<li><a href="/detail?currentpage='+(currentpage-1)+'">上一页</a></li>';
+						 }
+						 for(var i=0;i<counts;i++) {
+							 if (i >= (currentpage - 3) && i < (currentpage + 3)) {
+								 if (i == currentpage - 1) {
+									 pagehtml += '<li class="active"><a href="/detail?currentpage=' + (i + 1) + '">' + (i + 1) + '</a></li>';
+								 } else {
+									 pagehtml += '<li><a href="/detail?currentpage=' + (i + 1) + '">' + (i + 1) + '</a></li>';
+								 }
+							 }
+						 }
+					 if(currentpage<counts){
+						pagehtml+= '<li><a href="/detail?currentpage='+(currentpage+1)+'">下一页</a></li>';
+					 }
+				 }
+				 $(".pagination").html(pagehtml);
+			}
+			//给超链接添加点击事件
+			$(".table a").each(function(){
+				$(this).click(function(){
+					var params={id:$(this).attr("id")};
+					$.ajax({
+						data: params,
+						url: '/noteDetail',
+						dataType: 'json',
+						cache: false,
+						timeout: 5000,
+						success: function(data){
+							$("#note_title").text(data.title);
+							$("#note_time").text(data.createtime);
+							$("#note_content").text(data.cointent);
+							$('#myModal').modal('toggle');
+						},
+						error: function(jqXHR, textStatus, errorThrown){
+							alert('error ' + textStatus + " " + errorThrown);
+						}
+					});
+				});
+			});
+		});
+	</script>
+	</body>
+</html>

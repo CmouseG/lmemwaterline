@@ -1,0 +1,24 @@
+<%- include header %>
+<!-- 内容开始部分 -->
+<div class="container">
+	<div class="row">
+		<div class="col-xs-4 col-xs-offset-4">
+			<form method="post" action="/post">
+				<div class="form-group">
+					<input type="text" class="form-control" name="title"></input>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" name="tag"></input>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" name="content"></input>
+				</div>
+				<button type="submit" class="btn btn-default center-block">
+					发表
+				</button>
+			</form>
+
+		</div>
+	</div>
+</div>
+<%- include footer %>
