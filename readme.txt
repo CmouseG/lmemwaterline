@@ -1,1 +1,1 @@
-mongod --dbpath=D:\mongodb\db
+waterline修改了数据库部分，可以兼容mysql和mogodb
